@@ -1,4 +1,7 @@
 # gpr300-templates
+
+[![Build](/../../actions/workflows/main.yml/badge.svg)](/../../actions/workflows/main.yml)
+
 Project templates for GPR-300 (Intermediate Graphics Programming)
 
 Setup Instructions:
