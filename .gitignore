@@ -1,8 +1,11 @@
-# visual studio project file
+# vscode project files
 .vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# vs project files
+.vs/
 
 # build output
 build/
