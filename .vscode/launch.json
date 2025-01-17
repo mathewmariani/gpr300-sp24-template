@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Desktop",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.getLaunchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${command:cmake.getLaunchTargetDirectory}",
+            "environment": [],
+            "preLaunchTask": "CMake: build",
+            "MIMode": "lldb",
+            "windows": {
+                "MIMode": "gdb"
+            },
+            "osx": {
+                "MIMode": "lldb"
+            },
+            "linux": {
+                "MIMode": "gdb"
+            }
+        }
+    ]
+}

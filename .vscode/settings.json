@@ -1,0 +1,14 @@
+{
+	"cmake.buildDirectory": "${workspaceFolder}/build",
+	"cmake.buildTask": false,
+	"cmake.configureOnOpen": false,
+	"cmake.configureOnEdit": false,
+	"cmake.options.statusBarVisibility": "hidden",
+	"cmake.options.advanced": {
+		"launchTarget": {
+			"visibility": "hidden"
+		}
+	},
+	"debug.showInStatusBar": "always",
+	"debug.onTaskErrors": "debugAnyway"
+}
