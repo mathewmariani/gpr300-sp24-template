@@ -17,23 +17,22 @@ const vec2 offsets[9] = vec2[](
 
 	vec2(-offset, -offset), // bottom-left
 	vec2(0.0, -offset), // bottom-center
-	vec2(offset, -offset), // bottom-right
+	vec2(offset, -offset) // bottom-right
 );
 
 const float strength = 16.0;
 const float kernel[9] = float[](
 	1.0, 2.0, 1.0,
 	2.0, 4.0, 2.0,
-	1.0, 2.0, 1.0,
+	1.0, 2.0, 1.0
 );
 
 void main() {
 	vec3 avg = vec3(0.0);
-
 	for (int i = 0; i < 9; i++)
 	{
-		vec3 local = texture(texture0, vs_texcoord + offset[i]).rgb;
+		vec3 local = texture(texture0, vs_texcoord + offsets[i]).rgb;
 		avg += local * (kernel[i] / strength);
 	}
-	FragColor = vec4(average, average, average, 1.0);
+	FragColor = vec4(avg.rgb, 1.0);
 }

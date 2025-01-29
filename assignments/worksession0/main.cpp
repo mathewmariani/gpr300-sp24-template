@@ -15,6 +15,8 @@
 #include "ew/texture.h"
 #include "ew/transform.h"
 
+#include <vector>
+#include <tuple>
 
 typedef struct {
   glm::vec3 highlight;
