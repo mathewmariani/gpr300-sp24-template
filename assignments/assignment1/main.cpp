@@ -116,7 +116,14 @@ struct Framebuffer {
 } framebuffer;
 
 
-static int effect_index = 0;
+enum {
+	EFFECT_NONE = 0,
+	EFFECT_GREYSCALE = 1,
+	EFFECT_BLUR = 2,
+	EFFECT_INVERSE = 3,
+	EFFECT_ABERRATION = 4,
+};
+
 static std::vector<std::string> post_processing_effects = {
     "None",
     "Grayscale",
@@ -125,6 +132,19 @@ static std::vector<std::string> post_processing_effects = {
     "Chromatic Aberration",
     "CRT",
 };
+
+struct {
+	int index = 0;
+
+	struct {
+		float strength = 16.0f;
+	} blur;
+	
+	struct {
+		glm::vec3 offset = glm::vec3(0.009f, 0.006f, -0.006f);
+		glm::vec2 direction = glm::vec2(1.0f);
+	} chromatic;
+} effect;
 
 void render(ew::Shader& shader, ew::Model& model)
 {
@@ -170,14 +190,20 @@ void post_process(ew::Shader& shader)
 	shader.setInt("texture0", 0);
 
 	// what other uniforms should we send ?
-	switch (effect_index)
+	switch (effect.index)
 	{
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
+		case EFFECT_GREYSCALE:
+			break;
+		case EFFECT_BLUR:
+			shader.setFloat("strength", effect.blur.strength);
+			break;
+		case EFFECT_INVERSE:
+			break;
+		case EFFECT_ABERRATION:
+			shader.setVec3("offset", effect.chromatic.offset);
+			shader.setVec2("direction", effect.chromatic.direction);
+			break;
+		default:
 			break;
 	}
 
@@ -205,10 +231,10 @@ int main() {
 	texture = ew::loadTexture("assets/brick_color.jpg");
 
 	std::vector<ew::Shader> effects = {
-		ew::Shader("assets/fullscreen.vert", "assets/nopost.frag"),
-		ew::Shader("assets/fullscreen.vert", "assets/inverse.frag"),
+		ew::Shader("assets/fullscreen.vert", "assets/noprocess.frag"),
 		ew::Shader("assets/fullscreen.vert", "assets/grayscale.frag"),
 		ew::Shader("assets/fullscreen.vert", "assets/blur.frag"),
+		ew::Shader("assets/fullscreen.vert", "assets/inverse.frag"),
 		ew::Shader("assets/fullscreen.vert", "assets/chromatic.frag"),
 	};
 
@@ -238,7 +264,7 @@ int main() {
 		render(blinnphong, suzanne);
 
 		// render fullscreen quad
-		post_process(effects[effect_index]);
+		post_process(effects[effect.index]);
 
 		drawUI();
 
@@ -271,15 +297,14 @@ void drawUI() {
 		ImGui::SliderFloat("Shininess", &material.Shininess, 2.0f, 1024.0f);
 	}
 
-	// in the drawUI functions
-	if (ImGui::BeginCombo("Effect", post_processing_effects[effect_index].c_str()))
+	if (ImGui::BeginCombo("Effect", post_processing_effects[effect.index].c_str()))
 	{
 		for (auto n = 0; n < post_processing_effects.size(); ++n)
 		{
-			auto is_selected = (post_processing_effects[effect_index] == post_processing_effects[n]);
+			auto is_selected = (post_processing_effects[effect.index] == post_processing_effects[n]);
 			if (ImGui::Selectable(post_processing_effects[n].c_str(), is_selected))
 			{
-				effect_index = n;
+				effect.index = n;
 			}
 			if (is_selected)
 			{
@@ -289,6 +314,14 @@ void drawUI() {
 		ImGui::EndCombo();
 	}
 
+	ImGui::Text("Post Process Controls:");
+	ImGui::Separator();
+	if (effect.index == EFFECT_BLUR) {
+		ImGui::SliderFloat("Strength", &effect.blur.strength, 0.0f, 32.0f);
+	} else if (effect.index == EFFECT_ABERRATION) {
+		ImGui::SliderFloat3("Offset", &effect.chromatic.offset[0], -1.0f, +1.0f);
+		ImGui::SliderFloat2("Direction", &effect.chromatic.direction[0], -1.0f, +1.0f);
+	}
 
 	ImGui::Image((ImTextureID)(intptr_t)framebuffer.color0, ImVec2(800, 600));
 
